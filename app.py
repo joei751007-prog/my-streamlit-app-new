@@ -46,16 +46,23 @@ st.info(f"Robot 最後巡邏時間：{robot_time}")
 # =========================
 # ✨【修正】自動將資料庫的 UTC 時間轉回台灣時間 (+8)
 # =========================
+# =========================
+# 🔄【修正防呆版】自動將資料庫的 UTC 時間轉回台灣時間 (+8)
+# =========================
 def format_time(iso_string):
-    if not iso_string:
+    # 💡 增強空值與型態檢查：如果為空、或是 Pandas 的 NaN，直接回傳 "-"
+    if iso_string is None or pd.isna(iso_string) or iso_string == "":
         return "-"
+    
     try:
-        # 使用 pandas 自動解析並轉換時區到台北時間 (UTC+8)
-        dt = pd.to_datetime(iso_string).tz_convert("Asia/Taipei")
+        # 強制轉成字串型態確保安全，再進 pandas 轉換時區
+        dt = pd.to_datetime(str(iso_string)).tz_convert("Asia/Taipei")
         return dt.strftime("%Y-%m-%d %H:%M:%S")
     except Exception:
-        # 如果格式有意外，改用原來的切字串防錯
-        return iso_string.replace("T", " ").split(".")[0][:19]
+        # 💡 備用邏輯防護：確保一定是字串才能用 replace
+        if isinstance(iso_string, str):
+            return iso_string.replace("T", " ").split(".")[0][:19]
+        return "-"
 
 # =========================
 # ✨【修改後】新增資料 (將下拉選單移出 form 以支援動態即時刷新)

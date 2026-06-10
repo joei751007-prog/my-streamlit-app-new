@@ -17,17 +17,20 @@ st.title("後台管理")
 tw_tz = timezone(timedelta(hours=8))
 
 # ========================================================
-# ✨【修正】後台同步自動將 UTC 時間轉回台灣時間 (+8)
+# 🔄【修正防呆版】後台同步自動將 UTC 時間轉回台灣時間 (+8)
 # ========================================================
-
 def format_time(iso_string):
-    if not iso_string or iso_string == "none":
+    # 💡 增強空值與型態檢查：後台預設顯示 "none"
+    if iso_string is None or pd.isna(iso_string) or iso_string == "" or iso_string == "none":
         return "none"
+    
     try:
-        dt = pd.to_datetime(iso_string).tz_convert("Asia/Taipei")
+        dt = pd.to_datetime(str(iso_string)).tz_convert("Asia/Taipei")
         return dt.strftime("%Y-%m-%d %H:%M:%S")
     except Exception:
-        return iso_string.replace("T", " ").split(".")[0][:19]
+        if isinstance(iso_string, str):
+            return iso_string.replace("T", " ").split(".")[0][:19]
+        return "none"
 
 # ========================================================
 # ✨【修改】API 入口（自動辨識單次/定時並計算下次時間）
