@@ -21,7 +21,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("PIAYIXIA定位任務系統_大雅版_V1.0_By沒時間玩咚奇剛")
+st.title("PIAYIXIA定位任務系統_大雅版_V1.1_By沒時間玩咚奇剛")
 
 # =========================
 # 自動刷新
