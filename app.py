@@ -89,10 +89,13 @@ with st.form("my_form", clear_on_submit=True):
     
     if submitted:
         if name and url:
-            # 呼叫資料庫寫入方法
-            add_task(name, url, task_type, interval_seconds)
-            st.success("新增成功")
-            # 強制刷新畫面，讓下方的任務列表立刻同步更新
+            # 💡 移除名稱與網址中的所有半形與全形空格，防止後端機器人 split() 錯亂
+            clean_name = name.replace(" ", "").replace(" ", "")
+            clean_url = url.replace(" ", "").replace(" ", "")
+            
+            # 呼叫資料庫寫入方法（改用乾淨的變數）
+            add_task(clean_name, clean_url, task_type, interval_seconds)
+            st.success("新增成功（已自動過濾空白字元）")
             st.rerun()
         else:
             st.error("請輸入完整資料")
